@@ -18,7 +18,7 @@ https://159.69.248.135/
 - var_stack_name: "apps"
 - db_root_password: "db_root_password"
 - db_user_password: "db_user_password"
-* 4. В playbook.yml раскомментируем роли!!!
+4. В playbook.yml раскомментируем роли!!!
       - update
       - create_user
       - docker
