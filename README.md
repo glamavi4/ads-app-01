@@ -10,7 +10,6 @@ https://159.69.248.135/
 - sudo_user      = root
 - remote_user    = root
 3. group_vars/all
-# Swarm vars
 - user_name: "user007"
 - project_dir: "app-01"
 - var_advertise_addr: "159.69.248.135"
@@ -19,3 +18,9 @@ https://159.69.248.135/
 - var_stack_name: "apps"
 - db_root_password: "db_root_password"
 - db_user_password: "db_user_password"
+# 4. В playbook.yml раскомментируем роли!!!
+      - update
+      - create_user
+      - docker
+      - dir_copy
+      - swarm_init
