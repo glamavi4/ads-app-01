@@ -1,0 +1,70 @@
+---
+    - name: Remove stack
+      docker_stack:
+        name: "{{ var_stack_name }}"
+        state: absent
+      ignore_errors: yes
+
+    - name: Remove a swarm manager
+      docker_swarm:
+        state: absent
+        force: true
+      ignore_errors: yes
+
+    - name: Delete a network, disconnecting all containers
+      docker_network:
+        name: "{{ var_network_name }}"
+        state: absent
+        force: yes
+      ignore_errors: yes
+
+    - name: Init Swarm
+      docker_swarm:
+        state: present
+        advertise_addr: "{{ var_advertise_addr }}"
+
+    - name: Create network
+      command: docker network create --driver overlay --opt com.docker.network.driver.mtu={{ var_mtu }} {{ var_network_name }}
+
+#    - name: Create a network
+#      docker_network:
+#        name: "{{ var_network_name }}"
+#        driver_options:
+#          com.docker.network.bridge.name: "{{ var_network_name }}"
+#          com.docker.network.overlay.name: "{{ var_network_name }}"
+#          com.docker.network.driver.mtu: "{{ var_mtu }}"
+#        ipam_options:
+#      subnet: '172.3.26.0/16'
+#      gateway: 172.3.26.1
+#      iprange: '192.168.1.0/24'
+
+    - name: Remove secret db_root_password
+      docker_secret:
+        name: db_root_password
+        state: absent
+      ignore_errors: yes
+
+    - name: Remove secret db_user_password
+      docker_secret:
+        name: db_user_password
+        state: absent
+      ignore_errors: yes
+
+    - name: Create secret db_root_password
+      docker_secret:
+        name: db_root_password
+        data: "{{ db_root_password }}"
+        state: present
+
+    - name: Create secret db_user_password
+      docker_secret:
+        name: db_user_password
+        data: "{{ db_user_password }}"
+        state: present
+
+    - name: Create secrets
+      command: docker secret create site.key /home/{{ user_name }}/{{ project_dir }}/site.key
+    - command: docker secret create site.crt /home/{{ user_name }}/{{ project_dir }}/site.crt
+    - command: docker secret create site.conf /home/{{ user_name }}/{{ project_dir }}/site.conf
+    
+    

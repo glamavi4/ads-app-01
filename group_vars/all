@@ -1,0 +1,43 @@
+---
+# Swarm vars
+user_name: "user007"
+project_dir: "app-01"
+var_build_path: "{{ project_dir }}/images/php"
+var_advertise_addr: "159.69.248.135"
+var_network_name: "appnet"
+var_mtu: "1200"
+var_stack_name: "apps"
+db_root_password: "Cwq6Mkf%s3sFGu$"
+db_user_password: "fzL3YUCgQ?Ho2"
+
+# Docker
+local_home: "{{ lookup('env','HOME') }}"
+docker_version: "5:19.03.6~3-0~debian-buster"
+docker_path: "/home/{{ user_name }}"
+docker_deb_url: "https://download.docker.com/linux/debian/dists/stretch/pool/stable/amd64/docker-ce_19.03.6~3-0~debian-buster_amd64.deb"
+docker_users:
+#  - admin
+  - "{{ user_name }}"
+
+# Edition can be one of: 'ce' (Community Edition) or 'ee' (Enterprise Edition).
+docker_edition: 'ce'
+docker_package: "docker-{{ docker_edition }}"
+docker_package_state: present
+
+# Service options.
+docker_service_state: started
+docker_service_enabled: true
+docker_restart_handler_state: restarted
+
+# Docker Compose options.
+docker_install_compose: true
+docker_compose_version: "1.25.4"
+docker_compose_path: /usr/local/bin/docker-compose
+
+# Switch 'stable' to 'edge' if needed.
+docker_apt_release_channel: stable
+docker_apt_arch: amd64
+docker_apt_repository: "deb [arch={{ docker_apt_arch }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
+#docker_apt_repository: "deb [arch={{ docker_apt_arch }}] https://download.docker.com/linux/debian buster stable"
+docker_apt_ignore_key_error: true
+docker_apt_gpg_key: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg

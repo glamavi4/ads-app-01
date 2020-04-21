@@ -1,0 +1,99 @@
+version: '3.3'
+services:
+
+    mysql:
+      image: mysql
+      secrets:
+          - db_root_password
+          - db_user_password
+      command: --default-authentication-plugin=mysql_native_password
+      environment:
+            MYSQL_USER: userdb
+            MYSQL_DATABASE: world
+            MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+            MYSQL_PASSWORD_FILE: /run/secrets/db_user_password
+      volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - ./mysql:/var/lib/mysql
+          - ./world.sql:/docker-entrypoint-initdb.d/world.sql
+      ports:
+          - 3306:3306
+      deploy:
+        replicas: 1
+        placement:
+            constraints: [node.role == manager]
+      networks:
+          - appnet
+
+    nginx:
+      image: nginx:latest
+      secrets:
+          - site.key
+          - site.crt
+          - site.conf      
+      ports:
+#          - "80:80"
+          - "443:443"
+      volumes:
+          - ./hosts:/etc/nginx/conf.d
+          - ./www:/var/www
+          - ./logs:/var/log/nginx
+      depends_on:
+          - php
+      deploy:
+        replicas: 1
+        placement:
+            constraints: [node.role == manager]
+      networks:
+          - appnet
+#    wordpress:
+#      image: wordpress:5.1.1-php7.1-apache
+#      depends_on:
+#          - mysql
+#      volumes:
+#          - ./wordpress/content:/var/www/html/wp-content
+#      environment:
+#            WORDPRESS_DB_HOST: mysql:3306
+#            WORDPRESS_DB_PASSWORD: wordpresspassword
+#      ports:
+#          - 8001:80
+#      networks:
+#          - appnet
+
+    php:
+      image: app/php-7.2-fpm
+      secrets:
+          - db_user_password
+          - site.key
+          - site.crt
+          - site.conf 
+      volumes:
+          - ./www:/var/www
+      deploy:
+        replicas: 1
+        placement:
+            constraints: [node.role == manager]
+      networks:
+          - appnet
+      depends_on:
+          - mysql
+      environment:
+#            MYSQL_HOST: mysql
+#            MYSQL_NAME: world
+#            MYSQL_USER: userdb
+            MYSQL_PASSWORD_FILE: /run/secrets/db_user_password
+secrets:
+  db_root_password:
+    external: true
+  db_user_password:
+    external: true
+  site.conf:
+    external: true
+  site.crt:
+    external: true
+  site.key:
+    external: true
+
+networks:
+  appnet:
+    external: true

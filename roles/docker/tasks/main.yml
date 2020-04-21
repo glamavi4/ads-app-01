@@ -1,0 +1,117 @@
+---
+- name: Ensure old versions of Docker are not installed.
+  package:
+    name:
+      - docker
+      - docker-engine
+    state: absent
+
+- name: Ensure dependencies are installed.
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg2
+    state: present
+
+- name: Add Docker apt key.
+  apt_key:
+    url: "{{ docker_apt_gpg_key }}"
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    state: present
+  register: add_repository_key
+  ignore_errors: "{{ docker_apt_ignore_key_error }}"
+
+- name: Add Docker repository.
+  apt_repository:
+    repo: "{{ docker_apt_repository }}"
+    state: present
+    update_cache: true
+
+- name: Check if Docker is installed
+  command: dpkg-query -W docker
+  register: docker_check_deb
+  failed_when: docker_check_deb.rc > 1
+  changed_when: docker_check_deb.rc == 1
+
+- name: Install docker-ce
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+  when: docker_check_deb.rc == 1
+
+- name: Install pip
+  command: apt-get install -y python-pip
+
+- name: Install python dependencies
+  become: true
+  apt:
+    state: latest
+    name:
+      - python3 
+      - python3-pip
+      - python3-setuptools
+    state: latest
+    update_cache: True
+
+- name: Install required pip packages
+  pip:
+    name:
+      - argparse
+      - bleach
+      - requests-toolbelt
+    executable: pip3
+
+- name: install 'Docker SDK for Python'
+  pip:
+    name: docker
+    state: present
+
+- name: Ensure Docker is started and enabled at boot.
+  service:
+    name: docker
+    state: "{{ docker_service_state }}"
+    enabled: "{{ docker_service_enabled }}"
+
+- name: Check current docker-compose version.
+  command: docker-compose --version
+  register: docker_compose_current_version
+  changed_when: false
+  failed_when: false
+
+- name: Delete existing docker-compose version if it's different.
+  file:
+    path: "{{ docker_compose_path }}"
+    state: absent
+  when: >
+    docker_compose_current_version.stdout is defined
+    and docker_compose_version not in docker_compose_current_version.stdout
+
+- name: Install Docker Compose (if configured).
+  get_url:
+    url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
+    dest: "{{ docker_compose_path }}"
+    mode: 0755
+
+- name: Installing docker compose
+  pip:
+    name: docker-compose
+    state: present
+  when: docker_install_compose | bool
+  
+- name: Install jsondiff
+  pip:
+    name: jsondiff
+    state: present
+  when: docker_install_compose | bool
+
+- name: Ensure docker users are added to the docker group.
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  with_items: "{{ docker_users }}"
+  when: docker_users | length > 0

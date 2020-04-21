@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>Boosta-task</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> </head>
+</head>
+<body>
+<H1 ALIGN=CENTER>Task-01</H1>
+<p><strong>1. Развернуть проетк(github) или gitlab</strong></p>
+<p><strong>2. Написать role на ansible который бы выполнял:</strong></p>
+<ol>
+  <li>обновление системы</li>
+  <li>создание пользователя с sudo правами и создаными ssh ключами</li>
+  <li>установка docker(версии 19.03.06)</li>
+  <li>инициализация swarm стека:</li>
+  <ul>
+  <li>в стеке должна быть описана overlay сеть с явным указанием mtu</li>
+  <li>nginx</li>
+  <li>mysql</li>
+  <li>php-fpm(wordpress,sympfony...) - можно взять и не php-fpm, любую технологию(flask например)</li>
+  <li>код минимум с одной html страничкой для проверки результа</li>
+  <li>volumes для mysql и php-fpm(чтобы данные после перезагрузки не удалялись)</li>
+  <li>docker config и docker secret для сервиса nginx</li>
+  <li>Создать самоподписные сертификаты и nginx конциги(желательно в ansible- но можно полдожить и в репу и просто перекидывать).</li>
+  <li>Наружу должны быть открыты только 80 и 443 порт</li>
+  </ul>
+</ol>
+<p><strong>3. Предоставить Код на gitlab(github)</strong></p>
+<p><strong>4. Дополнительно:</strong></p>
+<ol>
+  <li>связать бд с php-fpm и вывести какие-то данные с Бд.</li>
+  <li>написать ansible playbook котрый бы обновлял сертификаты и конфиги на сервере.</li>
+  <li>Если не получиться подкинуть docker config и docker secret можно простым пробрасыванием volumes в nginx</li>
+</ol>
+<p><strong>Результаты:</strong></p>
+<ol>
+  <li>http://159.69.248.135/info/</li>
+  <li>http://159.69.248.135/pass-gen/</li>
+  <li>http://159.69.248.135/db-connect/</li>
+  <li>http://159.69.248.135/world-show/</li>
+</body>
+</html>
+
