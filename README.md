@@ -4,11 +4,11 @@ https://159.69.248.135/
 
 При развертывании на новом сервере правим:
 1. hosts
-[all]
-swarm ansible_ssh_host=159.69.248.135 ansible_python_interpreter=/usr/bin/python3
+- [all]
+- swarm ansible_ssh_host=159.69.248.135 ansible_python_interpreter=/usr/bin/python3
 2. ansible.cfg
-sudo_user      = root
-remote_user    = root
+- sudo_user      = root
+- remote_user    = root
 3. group_vars/all
 # Swarm vars
 - user_name: "user007"
