@@ -1,0 +1,16 @@
+#Файлы
+.DS_Store
+key_ansible
+*.retry
+ansible.cfg
+key
+.idea
+.vscode/
+/.idea/workspace.xml
+*/__pycache__
+*.pyc
+# Terraform directories
+/terraform/.terraform/
+/terraform/terraform.tfstate
+/terraform/terraform.tfstate.backup
+/terraform/terraform.tfvars

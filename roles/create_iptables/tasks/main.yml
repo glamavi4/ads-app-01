@@ -1,0 +1,16 @@
+---
+- name: Install iptables
+  apt: pkg={{ item }} state=present
+  with_items:
+    - 'iptables'
+    - 'iptables-persistent'
+
+- name: Add config iptables.j2
+  template:
+    src: iptables.j2
+    dest: /etc/iptables/rules.v4
+    mode: 0755
+
+- name: reload iptables
+  become: yes
+  shell: /sbin/iptables-restore < /etc/iptables/rules.v4

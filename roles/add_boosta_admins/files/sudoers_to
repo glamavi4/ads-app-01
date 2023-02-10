@@ -1,0 +1,12 @@
+#####This file was created to determine the privileges of users-admins
+grull ALL=(ALL:ALL) NOPASSWD: ALL
+altraveler ALL=(ALL:ALL) NOPASSWD: ALL
+atrum ALL=(ALL:ALL) NOPASSWD: ALL
+jemper ALL=(ALL:ALL) NOPASSWD: ALL
+svd ALL=(ALL:ALL) NOPASSWD: ALL
+fess ALL=(ALL:ALL) NOPASSWD: ALL
+booba ALL=(ALL:ALL) NOPASSWD: ALL
+lut ALL=(ALL:ALL) NOPASSWD: ALL
+ivan ALL=(ALL:ALL) NOPASSWD: ALL
+mhladkykh ALL=(ALL:ALL) NOPASSWD: ALL
+developer ALL=(ALL:ALL) NOPASSWD: ALL

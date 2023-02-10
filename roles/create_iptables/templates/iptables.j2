@@ -1,0 +1,40 @@
+*filter
+:INPUT DROP [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:ICMP_11 - [0:0]
+:ICMP_77 - [0:0]
+:ICMP_HELLO - [0:0]
+:ICMP_WELCOME - [0:0]
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
+-A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,SYN,RST,PSH,ACK,URG -j DROP
+-A INPUT -i lo -j ACCEPT
+-A INPUT -s 91.206.30.12/32 -m comment --comment vpn1 -j ACCEPT
+-A INPUT -s 194.54.81.12/32 -m comment --comment vpn2 -j ACCEPT
+-A INPUT -s 193.200.173.171/32 -m comment --comment of_ant -j ACCEPT
+-A INPUT -s 195.230.153.234/32 -m comment --comment of_lub -j ACCEPT
+-A INPUT -s 194.44.220.70/32 -m comment --comment of_lv -j ACCEPT
+-A INPUT -s 46.4.99.221/32 -m comment --comment backup1 -j ACCEPT
+-A INPUT -s 176.9.36.66/32 -m comment --comment backup2 -j ACCEPT
+-A INPUT -s 159.69.49.216/32 -p icmp -m comment --comment zabbix -j ACCEPT
+-A INPUT -s 159.69.49.216/32 -p tcp -m tcp --dport 10050 -m comment --comment zabbix -j ACCEPT
+-A INPUT -s 0.0.0.0/32 -p tcp -m tcp --dport 80 -m comment --comment HTTP -j ACCEPT
+-A INPUT -s 0.0.0.0/32 -p tcp -m tcp --dport 443 -m comment --comment HTTPS -j ACCEPT
+-A INPUT -p icmp -m icmp --icmp-type 8 -m conntrack --ctstate NEW -j ICMP_HELLO
+-A INPUT -p tcp -m tcp --dport 22 -m conntrack --ctstate NEW -m recent --rcheck --seconds 60 --name SSH --mask 255.255.255.255 --rsource -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 22 -m conntrack --ctstate NEW -j DROP
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+-A ICMP_11 -m length --length 39 -m recent --set --name ICMP_11 --mask 255.255.255.255 --rsource -j ACCEPT
+-A ICMP_77 -m recent --remove --name ICMP_11 --mask 255.255.255.255 --rsource
+-A ICMP_77 -m length --length 105 -m recent --set --name ICMP_77 --mask 255.255.255.255 --rsource -j ICMP_WELCOME
+-A ICMP_HELLO -m recent --rcheck --seconds 60 --name ICMP_77 --mask 255.255.255.255 --rsource -j ICMP_WELCOME
+-A ICMP_HELLO -m recent --rcheck --name ICMP_11 --mask 255.255.255.255 --rsource -j ICMP_77
+-A ICMP_HELLO -j ICMP_11
+-A ICMP_WELCOME -m recent --remove --name ICMP_77 --mask 255.255.255.255 --rsource
+-A ICMP_WELCOME -m recent --set --name SSH --mask 255.255.255.255 --rsource
+-A ICMP_WELCOME -j LOG --log-prefix "11 77 "
+-A ICMP_WELCOME -j ACCEPT
+COMMIT

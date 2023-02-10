@@ -1,0 +1,114 @@
+---
+- name: Add user
+  user:
+    name: "{{ item }}"
+    state: present
+    shell: /bin/bash
+    generate_ssh_key: yes
+  with_items:
+    "{{users}}"
+  
+- name: add kay admin
+  copy:
+    src: "{{ item }}"
+    dest: /home/{{ item }}/.ssh/authorized_keys
+    mode: 0600
+    owner: "{{ item }}"
+    group: "{{ item }}"
+  with_items:
+    "{{users}}"
+  
+- name: check if sudo is installed
+  command: dpkg-query -W sudo
+  register: sudo_check
+  failed_when: sudo_check == 40
+  ignore_errors: true
+  
+- name: install sudo is not installed
+  apt:
+    name: "sudo"
+    update_cache: yes
+ # when: "not 'sudo' in sudo_check.stdout"
+  when: ansible_os_family == 'Debian'
+
+- name: install sudo is not installed
+  yum:
+    name: "sudo"
+    update_cache: yes
+ # when: "not 'sudo' in sudo_check.stdout"
+  when: ansible_os_family == 'RedHat'
+  
+- name: add file to sudoers.d
+  copy:
+    src: sudoers_to
+    dest: /etc/sudoers.d/admin_users
+  
+# - name: add users to privileges file
+#   lineinfile:
+#     dest: /etc/sudoers.d/admin_users
+#     insertafter: EOF
+#     line: '{{item}}	ALL=(ALL:ALL) NOPASSWD: ALL'
+#     state: present
+#   with_items:
+#     "{{users}}"
+
+# - name: PasswordAuthentication comment
+#   lineinfile:
+#     dest: /etc/ssh/sshd_config
+#     regexp: '^#PasswordAuthentication'
+#     insertbefore: BOF
+#     line: "PasswordAuthentication no"
+
+# - name: PasswordAuthentication yes to no
+#   lineinfile:
+#     dest: /etc/ssh/sshd_config
+#     regexp: '^PasswordAuthentication yes'
+#     insertbefore: BOF
+#     line: "PasswordAuthentication no"
+  
+# - name: check if .bashrc developer
+#   shell: grep "HISTTIMEFORMAT" /home/developer/.bashrc
+#   register: bashrc_developer
+#   failed_when: bashrc_developer == 40
+  
+# - name: add bash history developer
+#   lineinfile:
+#     dest: /home/developer/.bashrc
+#     insertafter: EOF
+#     line: 'export HISTTIMEFORMAT="%d/%m/%y %T "'
+#     state: present
+#   become: yes
+#   when: "not 'HISTTIMEFORMAT' in bashrc_developer.stdout"
+  
+- name: check if .bashrc root
+  shell: grep "HISTTIMEFORMAT" /root/.bashrc
+  register: bashrc_root
+  failed_when: bashrc_root == 40
+  
+- name: add bash history root
+  lineinfile:
+    dest: /root/.bashrc
+    insertafter: EOF
+    line: 'export HISTTIMEFORMAT="%d/%m/%y %T "'
+    state: present
+  become: yes
+  when: "not 'HISTTIMEFORMAT' in bashrc_root.stdout"
+
+# - name: test sshd
+#   shell: sshd -t
+#   register: test_sshd
+
+# - name:
+#   debug:
+#     msg: "{{test_sshd}}"
+
+- name: copy locale
+  copy:
+    src: locale
+    dest: /etc/default/locale
+
+- name: Ensure a locale exists
+  locale_gen:
+    name: en_US.UTF-8
+    state: present
+  when: ansible_os_family == 'Debian'
