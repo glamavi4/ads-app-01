@@ -38,3 +38,5 @@ docker service create \
     --api
 
 mkdir /home/user007/app-01/mysql
+
+docker exec -it fce7fc5c7680 bash -c 'apt-get -y update && apt -y install nano mc'
