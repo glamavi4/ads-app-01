@@ -22,3 +22,19 @@ https://ads-app-01.prokit.me
    - docker
    - dir_copy
    - swarm_init
+
+
+docker service create \
+    --name traefik \
+    --constraint=node.role==manager \
+    --publish 80:80 --publish 8080:8080 \
+    --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
+    --network appnet \
+    traefik:latest \
+    --docker \
+    --docker.swarmMode \
+    --docker.domain=traefik \
+    --docker.watch \
+    --api
+
+mkdir /home/user007/app-01/mysql
