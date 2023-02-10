@@ -1,19 +1,19 @@
 ---
 - hosts: all
   roles:
-#      - update
-#      - create_user
-#      - docker
+      #- update
+      #- create_user
+      #- docker
       - dir_copy
       - swarm_init
   tasks:
 
     - name: Build an image
       docker_image:
+        source: build
         build:
           path: "/home/{{ user_name }}/{{ var_build_path }}"
         name: "app/php-7.2-fpm"
-#        source: local
 
     - name: Deploy stack from a compose file
       docker_stack:
