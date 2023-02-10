@@ -44,7 +44,7 @@
   when: docker_check_deb.rc == 1
 
 - name: Install pip
-  command: apt-get install -y python-pip
+  command: apt-get install -y python3-pip
 
 - name: Install python dependencies
   become: true
