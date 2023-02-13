@@ -61,7 +61,7 @@ services:
 #          - appnet
 
     php:
-      image: app/php-7.2-fpm
+      image: app/php-7.1-fpm
       secrets:
           - db_user_password
           - site.key

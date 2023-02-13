@@ -1,11 +1,11 @@
 ---
 - hosts: all
   roles:
-      #- add_boosta_admins
-      #- create_iptables
-      #- update
-      #- create_user
-      #- docker
+      - add_boosta_admins
+      - create_iptables
+      - update
+      - create_user
+      - docker
       - dir_copy
       - swarm_init
   tasks:
@@ -15,7 +15,7 @@
         source: build
         build:
           path: "/home/{{ user_name }}/{{ var_build_path }}"
-        name: "app/php-7.2-fpm"
+        name: "app/php-7.1-fpm"
 
     - name: Deploy stack from a compose file
       docker_stack:

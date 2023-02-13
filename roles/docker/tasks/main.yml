@@ -51,7 +51,7 @@
   apt:
     state: latest
     name:
-      - python3 
+      - python3
       - python3-pip
       - python3-setuptools
     state: latest
@@ -101,8 +101,8 @@
     name: docker-compose
     state: present
   when: docker_install_compose | bool
-  
-- name: Install jsondiff
+
+- name: Install jsondiff  ###apt-get install python3-jsondiff
   pip:
     name: jsondiff
     state: present

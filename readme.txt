@@ -5,12 +5,12 @@ https://ads-app-01.prokit.me
       - [all]
       - swarm ansible_ssh_host=ads-app-01.prokit.me ansible_python_interpreter=/usr/bin/python3
 2. ansible.cfg
-      - sudo_user      = root
-      - remote_user    = root
+      - sudo_user      = mhladkykh
+      - remote_user    = mhladkykh
 3. group_vars/all
       - user_name: "user007"
       - project_dir: "app-01"
-      - var_advertise_addr: "159.69.248.135"
+      - var_advertise_addr: "<IP_ADDRESS>"
       - var_network_name: "appnet"
       - var_mtu: "1200"
       - var_stack_name: "apps"

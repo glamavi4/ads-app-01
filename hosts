@@ -1,2 +1,2 @@
 [all]
-swarm ansible_ssh_host=46.101.234.188 ansible_python_interpreter=/usr/bin/python3
+swarm ansible_ssh_host=167.172.189.156 ansible_python_interpreter=/usr/bin/python3
